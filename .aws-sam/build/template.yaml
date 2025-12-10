@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Betting Game API - Node.js Express API with PostgreSQL
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        NODE_ENV: production
+        DB_HOST: betting-game-db.ckp2ggowssdy.us-east-1.rds.amazonaws.com
+        DB_PORT: 5432
+        DB_NAME: betting
+        DB_USER: bettingadmin
+        DB_PASSWORD: BettingGame2025
+        DB_SSL: true
+        JWT_SECRET: your-super-secret-jwt-key-change-in-production
+        JWT_EXPIRES_IN: 7d
+        FLASK_API_URL: https://hi5z21yq40.execute-api.us-east-1.amazonaws.com/Prod
+  Api:
+    Cors:
+      AllowMethods: '''GET,POST,PUT,DELETE,OPTIONS'''
+      AllowHeaders: '''Content-Type,Authorization,X-Requested-With'''
+      AllowOrigin: '''*'''
+      MaxAge: '''600'''
+Resources:
+  BettingApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: BettingApiFunction
+      Handler: lambda.handler
+      Description: Betting Game API - Express app with PostgreSQL
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambdaVPCAccessExecutionRole
+      Tags:
+        Application: BettingGame
+        Component: API
+    Metadata:
+      SamResourceId: BettingApiFunction
+Outputs:
+  BettingApiUrl:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+  BettingApiFunctionArn:
+    Description: Betting API Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - BettingApiFunction
+      - Arn
+  BettingApiIamRole:
+    Description: Implicit IAM Role created for Betting API function
+    Value:
+      Fn::GetAtt:
+      - BettingApiFunctionRole
+      - Arn

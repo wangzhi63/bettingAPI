@@ -1,0 +1,1903 @@
+
+╔═══════════════════════════════════════════════╗
+║   🎮 Betting Game API Server                  ║
+║   Port: 3000                               ║
+║   Environment: development        ║
+║   Database: PostgreSQL                        ║
+╚═══════════════════════════════════════════════╝
+  
+2025-12-09T23:48:28.340Z - GET /health
+✅ Connected to PostgreSQL database
+2025-12-09T23:48:35.694Z - GET /api/cards/shop
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 26,
+  rows: 7
+}
+2025-12-09T23:48:44.398Z - POST /api/auth/register
+Executed query {
+  text: 'SELECT user_id FROM users WHERE email = $1 OR username = $2',
+  duration: 14,
+  rows: 0
+}
+2025-12-09T23:48:56.634Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 16,
+  rows: 1
+}
+2025-12-09T23:49:04.847Z - POST /api/cards/purchase
+2025-12-09T23:49:12.110Z - GET /api/cards/user/inventory
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 18,
+  rows: 1
+}
+2025-12-09T23:49:19.859Z - POST /api/betting/tables
+Executed query {
+  text: 'SELECT table_id FROM betting_tables WHERE match_id = $1',
+  duration: 28,
+  rows: 0
+}
+Executed query {
+  text: 'INSERT INTO betting_tables (match_id, match_name, match_date, status)\n' +
+    "       VALUES ($1, $2, $3, 'open')\n" +
+    '       RETURNING table_id, match_id, match_name, match_date, status, opened_at',
+  duration: 16,
+  rows: 1
+}
+2025-12-09T23:49:27.362Z - POST /api/betting/place-bet
+2025-12-09T23:49:32.989Z - GET /api/leaderboard
+Executed query {
+  text: 'SELECT u.user_id, u.username, u.full_name,\n' +
+    '              s.total_bets, s.total_wins, s.total_losses, s.win_rate,\n' +
+    '              s.total_wagered, s.total_won, s.net_profit, s.current_streak, s.best_streak,\n' +
+    '              w.chip_balance\n' +
+    '       FROM user_statistics s\n' +
+    '       JOIN users u ON s.user_id = u.user_id\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE s.total_bets > 0\n' +
+    '       ORDER BY net_profit DESC\n' +
+    '       LIMIT $1',
+  duration: 19,
+  rows: 0
+}
+2025-12-10T00:43:08.384Z - GET /health
+✅ Connected to PostgreSQL database
+2025-12-10T15:16:41.577Z - GET /api/cards/shop
+2025-12-10T15:16:41.583Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 308,
+  rows: 7
+}
+2025-12-10T15:17:58.656Z - POST /api/auth/register
+Error: [Error [ValidationError]: "username" is required] {
+  _original: { email: 'test@example.com', password: 'test123', name: 'Test User' },
+  details: [
+    {
+      message: '"username" is required',
+      path: [Array],
+      type: 'any.required',
+      context: [Object]
+    }
+  ],
+  isJoi: true
+}
+2025-12-10T15:18:07.960Z - POST /api/auth/register
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT user_id FROM users WHERE email = $1 OR username = $2',
+  duration: 214,
+  rows: 0
+}
+2025-12-10T15:18:15.917Z - POST /api/auth/register
+Executed query {
+  text: 'SELECT user_id FROM users WHERE email = $1 OR username = $2',
+  duration: 18,
+  rows: 1
+}
+2025-12-10T15:18:24.320Z - POST /api/auth/login
+Executed query {
+  text: 'SELECT u.user_id, u.email, u.username, u.password_hash, u.full_name, u.is_active,\n' +
+    '              w.chip_balance\n' +
+    '       FROM users u\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE u.email = $1',
+  duration: 19,
+  rows: 1
+}
+Executed query {
+  text: 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = $1',
+  duration: 19,
+  rows: 1
+}
+2025-12-10T15:18:59.221Z - GET /api/cards/shop
+2025-12-10T15:18:59.222Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 154,
+  rows: 7
+}
+2025-12-10T15:19:22.692Z - GET /api/cards/shop
+2025-12-10T15:19:22.696Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 16,
+  rows: 7
+}
+2025-12-10T15:19:37.928Z - GET /api/cards/shop
+2025-12-10T15:19:37.929Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 14,
+  rows: 7
+}
+2025-12-10T15:19:52.167Z - GET /api/cards/shop
+2025-12-10T15:19:52.167Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 14,
+  rows: 7
+}
+2025-12-10T15:20:10.189Z - GET /api/cards/shop
+2025-12-10T15:20:10.190Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 16,
+  rows: 7
+}
+2025-12-10T15:20:25.765Z - GET /api/cards/shop
+2025-12-10T15:20:25.766Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 16,
+  rows: 7
+}
+2025-12-10T15:22:05.598Z - GET /api/cards/shop
+2025-12-10T15:22:05.600Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 225,
+  rows: 7
+}
+2025-12-10T15:23:21.448Z - GET /api/cards/shop
+2025-12-10T15:23:21.450Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 271,
+  rows: 7
+}
+2025-12-10T15:24:02.361Z - GET /api/cards/shop
+2025-12-10T15:24:02.363Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 310,
+  rows: 7
+}
+2025-12-10T15:24:54.290Z - POST /api/auth/login
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT u.user_id, u.email, u.username, u.password_hash, u.full_name, u.is_active,\n' +
+    '              w.chip_balance\n' +
+    '       FROM users u\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE u.email = $1',
+  duration: 230,
+  rows: 1
+}
+Executed query {
+  text: 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = $1',
+  duration: 14,
+  rows: 1
+}
+2025-12-10T15:26:52.389Z - POST /api/auth/login
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT u.user_id, u.email, u.username, u.password_hash, u.full_name, u.is_active,\n' +
+    '              w.chip_balance\n' +
+    '       FROM users u\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE u.email = $1',
+  duration: 229,
+  rows: 1
+}
+Executed query {
+  text: 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = $1',
+  duration: 33,
+  rows: 1
+}
+2025-12-10T15:26:52.742Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 15,
+  rows: 1
+}
+2025-12-10T15:26:53.758Z - GET /api/cards/shop
+2025-12-10T15:26:53.759Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 20,
+  rows: 7
+}
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 137,
+  rows: 1
+}
+2025-12-10T15:34:31.870Z - POST /api/cards/purchase
+✅ Connected to PostgreSQL database
+2025-12-10T15:34:32.327Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 17,
+  rows: 1
+}
+2025-12-10T15:35:02.775Z - GET /api/wallet/balance
+2025-12-10T15:35:02.779Z - GET /api/wallet/transactions
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 165,
+  rows: 1
+}
+Executed query {
+  text: '\n' +
+    '      SELECT transaction_id, amount, transaction_type, description,\n' +
+    '             balance_before, balance_after, created_at, reference_id, reference_type\n' +
+    '      FROM wallet_transactions\n' +
+    '      WHERE user_id = $1\n' +
+    '     ORDER BY created_at DESC LIMIT $2 OFFSET $3',
+  duration: 163,
+  rows: 2
+}
+Executed query {
+  text: 'SELECT COUNT(*) FROM wallet_transactions WHERE user_id = $1',
+  duration: 16,
+  rows: 1
+}
+2025-12-10T15:35:09.679Z - GET /api/cards/user/inventory
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 23,
+  rows: 1
+}
+2025-12-10T15:35:26.940Z - GET /api/betting/tables
+2025-12-10T15:35:26.942Z - GET /api/betting/my-bets
+2025-12-10T15:35:26.945Z - GET /api/cards/user/inventory
+Executed query {
+  text: '\n' +
+    '      SELECT table_id, match_id, match_name, match_date, status,\n' +
+    '             total_bets_placed, total_chips_wagered, opened_at, closed_at, settled_at\n' +
+    '      FROM betting_tables\n' +
+    '     WHERE status = $1 ORDER BY match_date DESC, opened_at DESC',
+  duration: 17,
+  rows: 1
+}
+Executed query {
+  text: '\n' +
+    '      SELECT pb.bet_id, pb.wager_amount, pb.multiplier, pb.potential_payout,\n' +
+    '             pb.actual_payout, pb.status, pb.is_winning_card, pb.placed_at, pb.settled_at,\n' +
+    '             c.card_name, c.query_name, c.rarity,\n' +
+    '             bt.table_id, bt.match_id, bt.match_name, bt.status as table_status\n' +
+    '      FROM placed_bets pb\n' +
+    '      JOIN cards c ON pb.card_id = c.card_id\n' +
+    '      JOIN betting_tables bt ON pb.table_id = bt.table_id\n' +
+    '      WHERE pb.user_id = $1\n' +
+    '     ORDER BY pb.placed_at DESC LIMIT $2 OFFSET $3',
+  duration: 15,
+  rows: 0
+}
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 157,
+  rows: 1
+}
+2025-12-10T15:35:36.677Z - GET /api/leaderboard
+2025-12-10T15:35:36.680Z - GET /api/leaderboard/my-rank
+Executed query {
+  text: 'SELECT u.user_id, u.username, u.full_name,\n' +
+    '              s.total_bets, s.total_wins, s.total_losses, s.win_rate,\n' +
+    '              s.total_wagered, s.total_won, s.net_profit, s.current_streak, s.best_streak,\n' +
+    '              w.chip_balance\n' +
+    '       FROM user_statistics s\n' +
+    '       JOIN users u ON s.user_id = u.user_id\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE s.total_bets > 0\n' +
+    '       ORDER BY net_profit DESC\n' +
+    '       LIMIT $1',
+  duration: 16,
+  rows: 0
+}
+Executed query {
+  text: 'WITH ranked_users AS (\n' +
+    '         SELECT user_id, net_profit,\n' +
+    '                ROW_NUMBER() OVER (ORDER BY net_profit DESC) as rank\n' +
+    '         FROM user_statistics\n' +
+    '         WHERE total_bets > 0\n' +
+    '       )\n' +
+    '       SELECT ru.rank, s.*\n' +
+    '       FROM ranked_users ru\n' +
+    '       JOIN user_statistics s ON ru.user_id = s.user_id\n' +
+    '       WHERE s.user_id = $1',
+  duration: 16,
+  rows: 0
+}
+2025-12-10T15:36:29.473Z - GET /api/cards/shop
+2025-12-10T15:36:29.474Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 282,
+  rows: 1
+}
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 291,
+  rows: 7
+}
+2025-12-10T15:38:59.438Z - GET /api/cards/shop
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 219,
+  rows: 7
+}
+2025-12-10T15:42:45.665Z - GET /api/cards/shop
+2025-12-10T15:42:45.666Z - GET /api/wallet/balance
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 282,
+  rows: 1
+}
+Executed query {
+  text: 'SELECT c.card_id, c.card_name, c.query_name, c.query_description,\n' +
+    '              c.rarity, c.base_multiplier, c.chip_cost, c.is_tradeable,\n' +
+    '              cs.is_available, cs.stock_quantity, cs.discount_percentage, cs.featured\n' +
+    '       FROM cards c\n' +
+    '       LEFT JOIN card_shop cs ON c.card_id = cs.card_id\n' +
+    '       WHERE c.is_active = true\n' +
+    '       ORDER BY \n' +
+    '         CASE c.rarity\n' +
+    "           WHEN 'common' THEN 1\n" +
+    "           WHEN 'rare' THEN 2\n" +
+    "           WHEN 'epic' THEN 3\n" +
+    "           WHEN 'legendary' THEN 4\n" +
+    '         END,\n' +
+    '         c.chip_cost ASC',
+  duration: 286,
+  rows: 7
+}
+2025-12-10T15:42:53.491Z - POST /api/cards/purchase
+2025-12-10T15:42:53.715Z - GET /api/wallet/balance
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 14,
+  rows: 1
+}
+2025-12-10T15:43:17.877Z - GET /api/cards/user/inventory
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 15,
+  rows: 1
+}
+2025-12-10T15:43:58.057Z - GET /api/betting/tables
+2025-12-10T15:43:58.057Z - GET /api/betting/my-bets
+2025-12-10T15:43:58.060Z - GET /api/cards/user/inventory
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+Executed query {
+  text: '\n' +
+    '      SELECT table_id, match_id, match_name, match_date, status,\n' +
+    '             total_bets_placed, total_chips_wagered, opened_at, closed_at, settled_at\n' +
+    '      FROM betting_tables\n' +
+    '     WHERE status = $1 ORDER BY match_date DESC, opened_at DESC',
+  duration: 225,
+  rows: 1
+}
+Executed query {
+  text: '\n' +
+    '      SELECT pb.bet_id, pb.wager_amount, pb.multiplier, pb.potential_payout,\n' +
+    '             pb.actual_payout, pb.status, pb.is_winning_card, pb.placed_at, pb.settled_at,\n' +
+    '             c.card_name, c.query_name, c.rarity,\n' +
+    '             bt.table_id, bt.match_id, bt.match_name, bt.status as table_status\n' +
+    '      FROM placed_bets pb\n' +
+    '      JOIN cards c ON pb.card_id = c.card_id\n' +
+    '      JOIN betting_tables bt ON pb.table_id = bt.table_id\n' +
+    '      WHERE pb.user_id = $1\n' +
+    '     ORDER BY pb.placed_at DESC LIMIT $2 OFFSET $3',
+  duration: 225,
+  rows: 0
+}
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 226,
+  rows: 1
+}
+2025-12-10T15:46:53.759Z - GET /api/cards/user/inventory
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 238,
+  rows: 1
+}
+2025-12-10T15:47:11.413Z - GET /api/betting/tables
+2025-12-10T15:47:11.413Z - GET /api/betting/my-bets
+2025-12-10T15:47:11.417Z - GET /api/cards/user/inventory
+Executed query {
+  text: '\n' +
+    '      SELECT table_id, match_id, match_name, match_date, status,\n' +
+    '             total_bets_placed, total_chips_wagered, opened_at, closed_at, settled_at\n' +
+    '      FROM betting_tables\n' +
+    '     WHERE status = $1 ORDER BY match_date DESC, opened_at DESC',
+  duration: 18,
+  rows: 1
+}
+✅ Connected to PostgreSQL database
+✅ Connected to PostgreSQL database
+Executed query {
+  text: '\n' +
+    '      SELECT pb.bet_id, pb.wager_amount, pb.multiplier, pb.potential_payout,\n' +
+    '             pb.actual_payout, pb.status, pb.is_winning_card, pb.placed_at, pb.settled_at,\n' +
+    '             c.card_name, c.query_name, c.rarity,\n' +
+    '             bt.table_id, bt.match_id, bt.match_name, bt.status as table_status\n' +
+    '      FROM placed_bets pb\n' +
+    '      JOIN cards c ON pb.card_id = c.card_id\n' +
+    '      JOIN betting_tables bt ON pb.table_id = bt.table_id\n' +
+    '      WHERE pb.user_id = $1\n' +
+    '     ORDER BY pb.placed_at DESC LIMIT $2 OFFSET $3',
+  duration: 221,
+  rows: 0
+}
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 220,
+  rows: 1
+}
+2025-12-10T15:47:29.762Z - POST /api/betting/place-bet
+2025-12-10T15:47:29.956Z - GET /api/wallet/balance
+2025-12-10T15:47:29.959Z - GET /api/betting/my-bets
+2025-12-10T15:47:29.961Z - GET /api/cards/user/inventory
+Executed query {
+  text: '\n' +
+    '      SELECT pb.bet_id, pb.wager_amount, pb.multiplier, pb.potential_payout,\n' +
+    '             pb.actual_payout, pb.status, pb.is_winning_card, pb.placed_at, pb.settled_at,\n' +
+    '             c.card_name, c.query_name, c.rarity,\n' +
+    '             bt.table_id, bt.match_id, bt.match_name, bt.status as table_status\n' +
+    '      FROM placed_bets pb\n' +
+    '      JOIN cards c ON pb.card_id = c.card_id\n' +
+    '      JOIN betting_tables bt ON pb.table_id = bt.table_id\n' +
+    '      WHERE pb.user_id = $1\n' +
+    '     ORDER BY pb.placed_at DESC LIMIT $2 OFFSET $3',
+  duration: 14,
+  rows: 1
+}
+Executed query {
+  text: 'SELECT chip_balance, total_earned, total_spent, updated_at\n' +
+    '       FROM wallets\n' +
+    '       WHERE user_id = $1',
+  duration: 18,
+  rows: 1
+}
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 16,
+  rows: 1
+}
+2025-12-10T15:49:46.522Z - POST /api/auth/login
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT u.user_id, u.email, u.username, u.password_hash, u.full_name, u.is_active,\n' +
+    '              w.chip_balance\n' +
+    '       FROM users u\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE u.email = $1',
+  duration: 208,
+  rows: 1
+}
+Executed query {
+  text: 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = $1',
+  duration: 16,
+  rows: 1
+}
+2025-12-10T15:49:46.835Z - POST /api/betting/create-table
+2025-12-10T15:50:22.070Z - POST /api/auth/login
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT u.user_id, u.email, u.username, u.password_hash, u.full_name, u.is_active,\n' +
+    '              w.chip_balance\n' +
+    '       FROM users u\n' +
+    '       LEFT JOIN wallets w ON u.user_id = w.user_id\n' +
+    '       WHERE u.email = $1',
+  duration: 233,
+  rows: 1
+}
+Executed query {
+  text: 'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = $1',
+  duration: 16,
+  rows: 1
+}
+2025-12-10T15:50:22.566Z - POST /api/betting/tables
+Executed query {
+  text: 'SELECT table_id FROM betting_tables WHERE match_id = $1',
+  duration: 87,
+  rows: 1
+}
+2025-12-10T15:53:25.973Z - GET /api/betting/tables
+✅ Connected to PostgreSQL database
+Executed query {
+  text: '\n' +
+    '      SELECT table_id, match_id, match_name, match_date, status,\n' +
+    '             total_bets_placed, total_chips_wagered, opened_at, closed_at, settled_at\n' +
+    '      FROM betting_tables\n' +
+    '     WHERE status = $1 ORDER BY match_date DESC, opened_at DESC',
+  duration: 212,
+  rows: 1
+}
+2025-12-10T15:53:28.711Z - GET /api/cards/my-cards
+Query error: error: invalid input syntax for type integer: "my-cards"
+    at /Users/zhiwang/tommy-project/bettingAPI/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async query (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:32:17)
+    at async exports.getCardDetails (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/cardController.js:199:20) {
+  length: 151,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+Error: error: invalid input syntax for type integer: "my-cards"
+    at /Users/zhiwang/tommy-project/bettingAPI/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async query (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:32:17)
+    at async exports.getCardDetails (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/cardController.js:199:20) {
+  length: 151,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+2025-12-10T15:53:38.548Z - GET /api/cards/my-cards
+✅ Connected to PostgreSQL database
+Query error: error: invalid input syntax for type integer: "my-cards"
+    at /Users/zhiwang/tommy-project/bettingAPI/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async query (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:32:17)
+    at async exports.getCardDetails (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/cardController.js:199:20) {
+  length: 151,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+Error: error: invalid input syntax for type integer: "my-cards"
+    at /Users/zhiwang/tommy-project/bettingAPI/node_modules/pg-pool/index.js:45:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async query (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:32:17)
+    at async exports.getCardDetails (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/cardController.js:199:20) {
+  length: 151,
+  severity: 'ERROR',
+  code: '22P02',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: "unnamed portal parameter $1 = '...'",
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'numutils.c',
+  line: '617',
+  routine: 'pg_strtoint32_safe'
+}
+2025-12-10T15:53:50.200Z - GET /api/cards/user/inventory
+✅ Connected to PostgreSQL database
+Executed query {
+  text: 'SELECT uc.user_card_id, uc.card_id, uc.quantity, uc.acquired_at, uc.acquisition_type,\n' +
+    '              c.card_name, c.query_name, c.query_description, c.rarity, c.base_multiplier\n' +
+    '       FROM user_cards uc\n' +
+    '       JOIN cards c ON uc.card_id = c.card_id\n' +
+    '       WHERE uc.user_id = $1\n' +
+    '       ORDER BY c.rarity DESC, uc.acquired_at DESC',
+  duration: 212,
+  rows: 1
+}
+2025-12-10T15:54:06.094Z - POST /api/betting/place-bet
+2025-12-10T15:54:22.983Z - POST /api/betting/place-bet
+✅ Connected to PostgreSQL database
+2025-12-10T15:54:30.966Z - POST /api/betting/tables/1/settle
+Error settling bet 1: AxiosError: Request failed with status code 405
+    at settle (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:2106:12)
+    at IncomingMessage.handleStreamEnd (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:3491:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1376:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:4731:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:366:33
+    at async transaction (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:47:20)
+    at async exports.settleBets (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:319:20) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 0,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'User-Agent': 'axios/1.13.2',
+      'Content-Length': '43',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'post',
+    url: 'http://localhost:5001/api/queries/execute',
+    data: '{"name":"penalty-kicks","match_id":"16029"}',
+    allowAbsoluteUrls: true
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: false,
+    _last: false,
+    chunkedEncoding: false,
+    shouldKeepAlive: false,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: true,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: '43',
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: false,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'localhost',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: null,
+      _server: null,
+      timeout: 0,
+      parser: null,
+      _httpMessage: [Circular *1],
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(async_id_symbol)]: 3261,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 57970936,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 3252,
+        [Symbol(triggerId)]: 0
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: true,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 60,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0
+    },
+    _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'Content-Type: application/json\r\n' +
+      'User-Agent: axios/1.13.2\r\n' +
+      'Content-Length: 43\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: localhost:5001\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 80,
+      protocol: 'http:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype] {},
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 1,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'POST',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/queries/execute',
+    _ended: true,
+    res: IncomingMessage {
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      socket: [Socket],
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 405,
+      statusMessage: 'METHOD NOT ALLOWED',
+      client: [Socket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      responseUrl: 'http://localhost:5001/api/queries/execute',
+      redirects: [],
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 14,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: [Function: emitRequestTimeout],
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'localhost',
+    protocol: 'http:',
+    _redirectable: Writable {
+      _writableState: [WritableState],
+      _events: [Object: null prototype],
+      _eventsCount: 3,
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 43,
+      _requestBodyBuffers: [],
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'http://localhost:5001/api/queries/execute',
+      _timeout: null,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'content-type': [Array],
+      'user-agent': [Array],
+      'content-length': [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 16384,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 405,
+    statusText: 'METHOD NOT ALLOWED',
+    headers: Object [AxiosHeaders] {
+      server: 'Werkzeug/3.1.4 Python/3.13.11',
+      date: 'Wed, 10 Dec 2025 15:54:31 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      allow: 'GET, HEAD, OPTIONS',
+      'content-length': '153',
+      'access-control-allow-origin': '*',
+      connection: 'close'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'post',
+      url: 'http://localhost:5001/api/queries/execute',
+      data: '{"name":"penalty-kicks","match_id":"16029"}',
+      allowAbsoluteUrls: true
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: false,
+      chunkedEncoding: false,
+      shouldKeepAlive: false,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: '43',
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: false,
+      socket: [Socket],
+      _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'Content-Type: application/json\r\n' +
+        'User-Agent: axios/1.13.2\r\n' +
+        'Content-Length: 43\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: localhost:5001\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'POST',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/queries/execute',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: [Function: emitRequestTimeout],
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'localhost',
+      protocol: 'http:',
+      _redirectable: [Writable],
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 16384,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!doctype html>\n' +
+      '<html lang=en>\n' +
+      '<title>405 Method Not Allowed</title>\n' +
+      '<h1>Method Not Allowed</h1>\n' +
+      '<p>The method is not allowed for the requested URL.</p>\n'
+  },
+  status: 405
+}
+Error settling bet 2: AxiosError: Request failed with status code 405
+    at settle (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:2106:12)
+    at IncomingMessage.handleStreamEnd (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:3491:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1376:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:4731:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:366:33
+    at async transaction (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:47:20)
+    at async exports.settleBets (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:319:20) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 0,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'User-Agent': 'axios/1.13.2',
+      'Content-Length': '43',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'post',
+    url: 'http://localhost:5001/api/queries/execute',
+    data: '{"name":"penalty-kicks","match_id":"16029"}',
+    allowAbsoluteUrls: true
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: false,
+    _last: false,
+    chunkedEncoding: false,
+    shouldKeepAlive: false,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: true,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: '43',
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: false,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'localhost',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: null,
+      _server: null,
+      timeout: 0,
+      parser: null,
+      _httpMessage: [Circular *1],
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(async_id_symbol)]: 3287,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 57970955,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 3278,
+        [Symbol(triggerId)]: 0
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: true,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 60,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0
+    },
+    _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'Content-Type: application/json\r\n' +
+      'User-Agent: axios/1.13.2\r\n' +
+      'Content-Length: 43\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: localhost:5001\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 80,
+      protocol: 'http:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype] {},
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 1,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'POST',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/queries/execute',
+    _ended: true,
+    res: IncomingMessage {
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      socket: [Socket],
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 405,
+      statusMessage: 'METHOD NOT ALLOWED',
+      client: [Socket],
+      _consuming: true,
+      _dumped: false,
+      req: [Circular *1],
+      responseUrl: 'http://localhost:5001/api/queries/execute',
+      redirects: [],
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 14,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: [Function: emitRequestTimeout],
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'localhost',
+    protocol: 'http:',
+    _redirectable: Writable {
+      _writableState: [WritableState],
+      _events: [Object: null prototype],
+      _eventsCount: 3,
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 43,
+      _requestBodyBuffers: [],
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'http://localhost:5001/api/queries/execute',
+      _timeout: null,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'content-type': [Array],
+      'user-agent': [Array],
+      'content-length': [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 16384,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 405,
+    statusText: 'METHOD NOT ALLOWED',
+    headers: Object [AxiosHeaders] {
+      server: 'Werkzeug/3.1.4 Python/3.13.11',
+      date: 'Wed, 10 Dec 2025 15:54:31 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      allow: 'GET, HEAD, OPTIONS',
+      'content-length': '153',
+      'access-control-allow-origin': '*',
+      connection: 'close'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'post',
+      url: 'http://localhost:5001/api/queries/execute',
+      data: '{"name":"penalty-kicks","match_id":"16029"}',
+      allowAbsoluteUrls: true
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: false,
+      chunkedEncoding: false,
+      shouldKeepAlive: false,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: '43',
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: false,
+      socket: [Socket],
+      _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'Content-Type: application/json\r\n' +
+        'User-Agent: axios/1.13.2\r\n' +
+        'Content-Length: 43\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: localhost:5001\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'POST',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/queries/execute',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: [Function: emitRequestTimeout],
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'localhost',
+      protocol: 'http:',
+      _redirectable: [Writable],
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 16384,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!doctype html>\n' +
+      '<html lang=en>\n' +
+      '<title>405 Method Not Allowed</title>\n' +
+      '<h1>Method Not Allowed</h1>\n' +
+      '<p>The method is not allowed for the requested URL.</p>\n'
+  },
+  status: 405
+}
+Error settling bet 3: AxiosError: Request failed with status code 405
+    at settle (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:2106:12)
+    at IncomingMessage.handleStreamEnd (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:3491:11)
+    at IncomingMessage.emit (node:events:526:35)
+    at endReadableNT (node:internal/streams/readable:1376:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+    at Axios.request (/Users/zhiwang/tommy-project/bettingAPI/node_modules/axios/dist/node/axios.cjs:4731:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:366:33
+    at async transaction (/Users/zhiwang/tommy-project/bettingAPI/src/config/database.js:47:20)
+    at async exports.settleBets (/Users/zhiwang/tommy-project/bettingAPI/src/controllers/bettingController.js:319:20) {
+  code: 'ERR_BAD_REQUEST',
+  config: {
+    transitional: {
+      silentJSONParsing: true,
+      forcedJSONParsing: true,
+      clarifyTimeoutError: false
+    },
+    adapter: [ 'xhr', 'http', 'fetch' ],
+    transformRequest: [ [Function: transformRequest] ],
+    transformResponse: [ [Function: transformResponse] ],
+    timeout: 0,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    env: { FormData: [Function], Blob: [class Blob] },
+    validateStatus: [Function: validateStatus],
+    headers: Object [AxiosHeaders] {
+      Accept: 'application/json, text/plain, */*',
+      'Content-Type': 'application/json',
+      'User-Agent': 'axios/1.13.2',
+      'Content-Length': '43',
+      'Accept-Encoding': 'gzip, compress, deflate, br'
+    },
+    method: 'post',
+    url: 'http://localhost:5001/api/queries/execute',
+    data: '{"name":"penalty-kicks","match_id":"16029"}',
+    allowAbsoluteUrls: true
+  },
+  request: <ref *1> ClientRequest {
+    _events: [Object: null prototype] {
+      abort: [Function (anonymous)],
+      aborted: [Function (anonymous)],
+      connect: [Function (anonymous)],
+      error: [Function (anonymous)],
+      socket: [Function (anonymous)],
+      timeout: [Function (anonymous)],
+      finish: [Function: requestOnFinish]
+    },
+    _eventsCount: 7,
+    _maxListeners: undefined,
+    outputData: [],
+    outputSize: 0,
+    writable: true,
+    destroyed: false,
+    _last: false,
+    chunkedEncoding: false,
+    shouldKeepAlive: false,
+    maxRequestsOnConnectionReached: false,
+    _defaultKeepAlive: true,
+    useChunkedEncodingByDefault: true,
+    sendDate: false,
+    _removedConnection: false,
+    _removedContLen: false,
+    _removedTE: false,
+    strictContentLength: false,
+    _contentLength: '43',
+    _hasBody: true,
+    _trailer: '',
+    finished: true,
+    _headerSent: true,
+    _closed: false,
+    socket: Socket {
+      connecting: false,
+      _hadError: false,
+      _parent: null,
+      _host: 'localhost',
+      _closeAfterHandlingError: false,
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      _writableState: [WritableState],
+      allowHalfOpen: false,
+      _sockname: null,
+      _pendingData: null,
+      _pendingEncoding: '',
+      server: null,
+      _server: null,
+      timeout: 0,
+      parser: null,
+      _httpMessage: [Circular *1],
+      autoSelectFamilyAttemptedAddresses: [Array],
+      [Symbol(async_id_symbol)]: 3311,
+      [Symbol(kHandle)]: [TCP],
+      [Symbol(lastWriteQueueSize)]: 0,
+      [Symbol(timeout)]: Timeout {
+        _idleTimeout: -1,
+        _idlePrev: null,
+        _idleNext: null,
+        _idleStart: 57970974,
+        _onTimeout: null,
+        _timerArgs: undefined,
+        _repeat: null,
+        _destroyed: true,
+        [Symbol(refed)]: false,
+        [Symbol(kHasPrimitive)]: false,
+        [Symbol(asyncId)]: 3302,
+        [Symbol(triggerId)]: 0
+      },
+      [Symbol(kBuffer)]: null,
+      [Symbol(kBufferCb)]: null,
+      [Symbol(kBufferGen)]: null,
+      [Symbol(kCapture)]: false,
+      [Symbol(kSetNoDelay)]: true,
+      [Symbol(kSetKeepAlive)]: true,
+      [Symbol(kSetKeepAliveInitialDelay)]: 60,
+      [Symbol(kBytesRead)]: 0,
+      [Symbol(kBytesWritten)]: 0
+    },
+    _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+      'Accept: application/json, text/plain, */*\r\n' +
+      'Content-Type: application/json\r\n' +
+      'User-Agent: axios/1.13.2\r\n' +
+      'Content-Length: 43\r\n' +
+      'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+      'Host: localhost:5001\r\n' +
+      'Connection: keep-alive\r\n' +
+      '\r\n',
+    _keepAliveTimeout: 0,
+    _onPendingData: [Function: nop],
+    agent: Agent {
+      _events: [Object: null prototype],
+      _eventsCount: 2,
+      _maxListeners: undefined,
+      defaultPort: 80,
+      protocol: 'http:',
+      options: [Object: null prototype],
+      requests: [Object: null prototype] {},
+      sockets: [Object: null prototype],
+      freeSockets: [Object: null prototype] {},
+      keepAliveMsecs: 1000,
+      keepAlive: true,
+      maxSockets: Infinity,
+      maxFreeSockets: 256,
+      scheduling: 'lifo',
+      maxTotalSockets: Infinity,
+      totalSocketCount: 1,
+      [Symbol(kCapture)]: false
+    },
+    socketPath: undefined,
+    method: 'POST',
+    maxHeaderSize: undefined,
+    insecureHTTPParser: undefined,
+    joinDuplicateHeaders: undefined,
+    path: '/api/queries/execute',
+    _ended: true,
+    res: IncomingMessage {
+      _readableState: [ReadableState],
+      _events: [Object: null prototype],
+      _eventsCount: 4,
+      _maxListeners: undefined,
+      socket: [Socket],
+      httpVersionMajor: 1,
+      httpVersionMinor: 1,
+      httpVersion: '1.1',
+      complete: true,
+      rawHeaders: [Array],
+      rawTrailers: [],
+      joinDuplicateHeaders: undefined,
+      aborted: false,
+      upgrade: false,
+      url: '',
+      method: null,
+      statusCode: 405,
+      statusMessage: 'METHOD NOT ALLOWED',
+      client: [Socket],
+      _consuming: false,
+      _dumped: false,
+      req: [Circular *1],
+      responseUrl: 'http://localhost:5001/api/queries/execute',
+      redirects: [],
+      [Symbol(kCapture)]: false,
+      [Symbol(kHeaders)]: [Object],
+      [Symbol(kHeadersCount)]: 14,
+      [Symbol(kTrailers)]: null,
+      [Symbol(kTrailersCount)]: 0
+    },
+    aborted: false,
+    timeoutCb: [Function: emitRequestTimeout],
+    upgradeOrConnect: false,
+    parser: null,
+    maxHeadersCount: null,
+    reusedSocket: false,
+    host: 'localhost',
+    protocol: 'http:',
+    _redirectable: Writable {
+      _writableState: [WritableState],
+      _events: [Object: null prototype],
+      _eventsCount: 3,
+      _maxListeners: undefined,
+      _options: [Object],
+      _ended: true,
+      _ending: true,
+      _redirectCount: 0,
+      _redirects: [],
+      _requestBodyLength: 43,
+      _requestBodyBuffers: [],
+      _onNativeResponse: [Function (anonymous)],
+      _currentRequest: [Circular *1],
+      _currentUrl: 'http://localhost:5001/api/queries/execute',
+      _timeout: null,
+      [Symbol(kCapture)]: false
+    },
+    [Symbol(kCapture)]: false,
+    [Symbol(kBytesWritten)]: 0,
+    [Symbol(kNeedDrain)]: false,
+    [Symbol(corked)]: 0,
+    [Symbol(kOutHeaders)]: [Object: null prototype] {
+      accept: [Array],
+      'content-type': [Array],
+      'user-agent': [Array],
+      'content-length': [Array],
+      'accept-encoding': [Array],
+      host: [Array]
+    },
+    [Symbol(errored)]: null,
+    [Symbol(kHighWaterMark)]: 16384,
+    [Symbol(kRejectNonStandardBodyWrites)]: false,
+    [Symbol(kUniqueHeaders)]: null
+  },
+  response: {
+    status: 405,
+    statusText: 'METHOD NOT ALLOWED',
+    headers: Object [AxiosHeaders] {
+      server: 'Werkzeug/3.1.4 Python/3.13.11',
+      date: 'Wed, 10 Dec 2025 15:54:31 GMT',
+      'content-type': 'text/html; charset=utf-8',
+      allow: 'GET, HEAD, OPTIONS',
+      'content-length': '153',
+      'access-control-allow-origin': '*',
+      connection: 'close'
+    },
+    config: {
+      transitional: [Object],
+      adapter: [Array],
+      transformRequest: [Array],
+      transformResponse: [Array],
+      timeout: 0,
+      xsrfCookieName: 'XSRF-TOKEN',
+      xsrfHeaderName: 'X-XSRF-TOKEN',
+      maxContentLength: -1,
+      maxBodyLength: -1,
+      env: [Object],
+      validateStatus: [Function: validateStatus],
+      headers: [Object [AxiosHeaders]],
+      method: 'post',
+      url: 'http://localhost:5001/api/queries/execute',
+      data: '{"name":"penalty-kicks","match_id":"16029"}',
+      allowAbsoluteUrls: true
+    },
+    request: <ref *1> ClientRequest {
+      _events: [Object: null prototype],
+      _eventsCount: 7,
+      _maxListeners: undefined,
+      outputData: [],
+      outputSize: 0,
+      writable: true,
+      destroyed: false,
+      _last: false,
+      chunkedEncoding: false,
+      shouldKeepAlive: false,
+      maxRequestsOnConnectionReached: false,
+      _defaultKeepAlive: true,
+      useChunkedEncodingByDefault: true,
+      sendDate: false,
+      _removedConnection: false,
+      _removedContLen: false,
+      _removedTE: false,
+      strictContentLength: false,
+      _contentLength: '43',
+      _hasBody: true,
+      _trailer: '',
+      finished: true,
+      _headerSent: true,
+      _closed: false,
+      socket: [Socket],
+      _header: 'POST /api/queries/execute HTTP/1.1\r\n' +
+        'Accept: application/json, text/plain, */*\r\n' +
+        'Content-Type: application/json\r\n' +
+        'User-Agent: axios/1.13.2\r\n' +
+        'Content-Length: 43\r\n' +
+        'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+        'Host: localhost:5001\r\n' +
+        'Connection: keep-alive\r\n' +
+        '\r\n',
+      _keepAliveTimeout: 0,
+      _onPendingData: [Function: nop],
+      agent: [Agent],
+      socketPath: undefined,
+      method: 'POST',
+      maxHeaderSize: undefined,
+      insecureHTTPParser: undefined,
+      joinDuplicateHeaders: undefined,
+      path: '/api/queries/execute',
+      _ended: true,
+      res: [IncomingMessage],
+      aborted: false,
+      timeoutCb: [Function: emitRequestTimeout],
+      upgradeOrConnect: false,
+      parser: null,
+      maxHeadersCount: null,
+      reusedSocket: false,
+      host: 'localhost',
+      protocol: 'http:',
+      _redirectable: [Writable],
+      [Symbol(kCapture)]: false,
+      [Symbol(kBytesWritten)]: 0,
+      [Symbol(kNeedDrain)]: false,
+      [Symbol(corked)]: 0,
+      [Symbol(kOutHeaders)]: [Object: null prototype],
+      [Symbol(errored)]: null,
+      [Symbol(kHighWaterMark)]: 16384,
+      [Symbol(kRejectNonStandardBodyWrites)]: false,
+      [Symbol(kUniqueHeaders)]: null
+    },
+    data: '<!doctype html>\n' +
+      '<html lang=en>\n' +
+      '<title>405 Method Not Allowed</title>\n' +
+      '<h1>Method Not Allowed</h1>\n' +
+      '<p>The method is not allowed for the requested URL.</p>\n'
+  },
+  status: 405
+}
+2025-12-10T15:54:38.440Z - GET /api/betting/tables/1/bets
