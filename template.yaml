@@ -18,7 +18,7 @@ Globals:
         DB_SSL: true
         JWT_SECRET: your-super-secret-jwt-key-change-in-production
         JWT_EXPIRES_IN: 7d
-        FLASK_API_URL: https://hi5z21yq40.execute-api.us-east-1.amazonaws.com/Prod
+        QUERY_API_URL: https://hi5z21yq40.execute-api.us-east-1.amazonaws.com/Prod
   Api:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
