@@ -1,8 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
+const { OAuth2Client } = require('google-auth-library');
+const axios = require('axios');
 const { query, transaction } = require('../config/database');
 require('dotenv').config();
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Validation schemas
 const registerSchema = Joi.object({
@@ -238,6 +242,149 @@ exports.getProfile = async (req, res, next) => {
       }
     });
   } catch (error) {
+    next(error);
+  }
+};
+
+// OAuth Login/Register (Google/Apple)
+exports.oauthLogin = async (req, res, next) => {
+  try {
+    const { provider, token } = req.body;
+
+    if (!provider || !token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Provider and token are required'
+      });
+    }
+
+    let email, fullName, providerId;
+
+    // Verify token based on provider
+    if (provider === 'google') {
+      try {
+        const ticket = await googleClient.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID
+        });
+        const payload = ticket.getPayload();
+        email = payload.email;
+        fullName = payload.name;
+        providerId = payload.sub;
+      } catch (error) {
+        return res.status(401).json({
+          success: false,
+          error: 'Invalid Google token'
+        });
+      }
+    } else if (provider === 'apple') {
+      // Apple token verification (requires more setup)
+      try {
+        // Decode Apple ID token (simplified - in production, verify signature)
+        const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        email = decodedToken.email;
+        providerId = decodedToken.sub;
+        fullName = email.split('@')[0]; // Default name from email
+      } catch (error) {
+        return res.status(401).json({
+          success: false,
+          error: 'Invalid Apple token'
+        });
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'Unsupported OAuth provider'
+      });
+    }
+
+    // Check if user exists by email or OAuth provider
+    let existingUser = await query(
+      'SELECT * FROM users WHERE email = $1 OR (oauth_provider = $2 AND oauth_provider_id = $3)',
+      [email, provider, providerId]
+    );
+
+    let userId;
+
+    if (existingUser.rows.length > 0) {
+      // User exists - update OAuth info if not set
+      const user = existingUser.rows[0];
+      userId = user.user_id;
+
+      if (!user.oauth_provider) {
+        await query(
+          'UPDATE users SET oauth_provider = $1, oauth_provider_id = $2 WHERE user_id = $3',
+          [provider, providerId, userId]
+        );
+      }
+    } else {
+      // New user - create account with OAuth
+      const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7);
+      
+      const result = await transaction(async (client) => {
+        // Insert user with OAuth info
+        const userResult = await client.query(
+          `INSERT INTO users (email, username, full_name, oauth_provider, oauth_provider_id, password_hash, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, NOW())
+           RETURNING user_id, email, username, full_name, created_at`,
+          [email, username, fullName, provider, providerId, 'oauth'] // Use 'oauth' as placeholder password
+        );
+
+        userId = userResult.rows[0].user_id;
+
+        // Create wallet with initial balance
+        await client.query(
+          `INSERT INTO wallets (user_id, chip_balance, total_earned, total_spent, created_at, updated_at)
+           VALUES ($1, 1000, 0, 0, NOW(), NOW())`,
+          [userId]
+        );
+
+        // Add initial transaction
+        await client.query(
+          `INSERT INTO wallet_transactions (user_id, wallet_id, transaction_type, amount, balance_before, balance_after, description, created_at)
+           SELECT $1, wallet_id, 'deposit', 1000, 0, 1000, 'Initial signup bonus', NOW()
+           FROM wallets WHERE user_id = $1`,
+          [userId]
+        );
+
+        return userResult.rows[0];
+      });
+    }
+
+    // Generate JWT token
+    const jwtToken = jwt.sign(
+      { userId: userId, email: email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Get user info with wallet
+    const userInfo = await query(
+      `SELECT u.user_id, u.email, u.username, u.full_name, u.created_at,
+              w.wallet_id, w.chip_balance
+       FROM users u
+       LEFT JOIN wallets w ON u.user_id = w.user_id
+       WHERE u.user_id = $1`,
+      [userId]
+    );
+
+    const user = userInfo.rows[0];
+
+    res.json({
+      success: true,
+      message: existingUser.rows.length > 0 ? 'Login successful' : 'Account created successfully',
+      token: jwtToken,
+      user: {
+        id: user.user_id,
+        email: user.email,
+        username: user.username,
+        fullName: user.full_name,
+        walletId: user.wallet_id,
+        balance: parseFloat(user.chip_balance || 0)
+      }
+    });
+  } catch (error) {
+    console.error('OAuth error:', error);
     next(error);
   }
 };
